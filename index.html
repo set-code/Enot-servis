@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Енот — Ремонт ЭБУ блоков автомобилей</title>
+    <!-- Tailwind for rapid high-quality styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #1e272e;
+            --secondary: #485460;
+            --accent: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at top right, rgba(72, 84, 96, 0.05), transparent),
+                        radial-gradient(circle at bottom left, rgba(30, 39, 46, 0.05), transparent);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .modal-enter {
+            animation: modalEnter 0.3s ease-out forwards;
+        }
+
+        @keyframes modalEnter {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body class="selection:bg-[#485460] selection:text-white">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="bg-[#1e272e] p-2 rounded-lg">
+                        <i data-lucide="cpu" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="text-2xl font-extrabold tracking-tighter text-[#1e272e]">ЕНОТ</span>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#services" class="text-sm font-medium text-[#485460] hover:text-[#1e272e] transition-colors">Услуги</a>
+                    <a href="#process" class="text-sm font-medium text-[#485460] hover:text-[#1e272e] transition-colors">Процесс</a>
+                    <a href="#about" class="text-sm font-medium text-[#485460] hover:text-[#1e272e] transition-colors">О нас</a>
+                    <a href="#reviews" class="text-sm font-medium text-[#485460] hover:text-[#1e272e] transition-colors">Отзывы</a>
+                    <a href="#contact" class="text-sm font-medium text-[#485460] hover:text-[#1e272e] transition-colors">Контакты</a>
+                    <a href="tel:+79991234567" class="flex items-center space-x-2 bg-[#1e272e] text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-[#485460] transition-all transform hover:scale-105 shadow-md">
+                        <i data-lucide="phone" class="w-4 h-4"></i>
+                        <span>Позвонить</span>
+                    </a>
+                </div>
+
+                <button id="mobile-menu-btn" class="md:hidden text-[#1e272e]">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white hidden transition-all duration-300">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-12">
+                <span class="text-2xl font-extrabold text-[#1e272e]">ЕНОТ</span>
+                <button id="close-menu-btn"><i data-lucide="x" class="w-8 h-8"></i></button>
+            </div>
+            <div class="flex flex-col space-y-8 text-center text-2xl font-bold text-[#485460]">
+                <a href="#services" onclick="toggleMenu()">Услуги</a>
+                <a href="#process" onclick="toggleMenu()">Процесс</a>
+                <a href="#about" onclick="toggleMenu()">О нас</a>
+                <a href="#reviews" onclick="toggleMenu()">Отзывы</a>
+                <a href="#contact" onclick="toggleMenu()">Контакты</a>
+                <a href="tel:+79991234567" class="bg-[#1e272e] text-white py-5 rounded-2xl">Позвонить</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden hero-gradient">
+        <div class="absolute top-0 left-0 w-full h-full -z-10 opacity-30 pointer-events-none">
+            <div class="absolute top-20 right-10 w-64 h-64 bg-[#485460] rounded-full blur-[100px] animate-pulse"></div>
+            <div class="absolute bottom-20 left-10 w-96 h-96 bg-[#1e272e] rounded-full blur-[120px] animate-pulse"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
+                <div class="text-center lg:text-left space-y-8">
+                    <div class="inline-flex items-center space-x-2 bg-white/50 backdrop-blur-sm border border-white/30 px-4 py-2 rounded-full shadow-sm">
+                        <span class="flex h-2 w-2 rounded-full bg-green-500 animate-ping"></span>
+                        <span class="text-xs font-bold uppercase tracking-widest text-[#485460]">Принимаем блоки сегодня</span>
+                    </div>
+                    
+                    <h1 class="text-5xl lg:text-7xl font-extrabold tracking-tight text-[#1e272e] leading-[1.1]">
+                        Ремонт <span class="gradient-text">ЭБУ блоков</span> любой сложности
+                    </h1>
+                    
+                    <p class="text-lg lg:text-xl text-[#485460] max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light">
+                        Профессиональное восстановление автомобильной электроники. От легковых авто до спецтехники. Оригинальные запчасти и гарантия результата.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="#contact" class="w-full sm:w-auto bg-[#1e272e] text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-[#485460] transition-all shadow-xl hover:-translate-y-1 flex items-center justify-center group">
+                            Оставить заявку
+                            <i data-lucide="chevron-right" class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <a href="#contact" class="w-full sm:w-auto bg-white text-[#1e272e] border-2 border-slate-200 px-8 py-4 rounded-2xl font-bold text-lg hover:border-[#1e272e] transition-all flex items-center justify-center">
+                            Узнать стоимость
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-slate-200/60">
+                        <div class="flex items-center space-x-3 justify-center lg:justify-start">
+                            <i data-lucide="zap" class="w-5 h-5 text-[#1e272e]"></i>
+                            <span class="text-sm font-semibold text-[#485460]">Ремонт от 2-х дней</span>
+                        </div>
+                        <div class="flex items-center space-x-3 justify-center lg:justify-start">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-[#1e272e]"></i>
+                            <span class="text-sm font-semibold text-[#485460]">Гарантия качества</span>
+                        </div>
+                        <div class="flex items-center space-x-3 justify-center lg:justify-start">
+                            <i data-lucide="truck" class="w-5 h-5 text-[#1e272e]"></i>
+                            <span class="text-sm font-semibold text-[#485460]">Свой курьер</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hidden lg:block relative">
+                    <div class="relative z-10 p-8 rounded-[40px] overflow-hidden group">
+                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800" class="w-full h-auto rounded-[32px] shadow-2xl transition-transform duration-700 group-hover:scale-105" alt="ECU">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#1e272e]/40 to-transparent rounded-[32px]"></div>
+                        <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-3xl shadow-2xl border border-slate-100 animate-float">
+                            <div class="flex items-center space-x-4">
+                                <div class="bg-blue-100 p-3 rounded-2xl text-[#1e272e]">
+                                    <i data-lucide="cpu" class="w-8 h-8"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-tighter">Опыт работы</p>
+                                    <p class="text-2xl font-black text-[#1e272e]">10+ Лет</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-sm font-bold text-[#485460] uppercase tracking-widest mb-4">Наши направления</h2>
+                <h3 class="text-4xl lg:text-5xl font-extrabold text-[#1e272e] mb-6 tracking-tight">Ремонтируем всё, что имеет <span class="text-[#485460]">мозги</span></h3>
+                <p class="text-lg text-[#485460] font-light leading-relaxed">И неполадки в одном из блоков отражаются на работе всего автомобиля. Мы знаем, как вернуть его к жизни быстро и с гарантией.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="services-grid">
+                <!-- Cards injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section id="process" class="py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-extrabold text-[#1e272e] tracking-tight mb-4">Как мы работаем</h2>
+                <p class="text-[#485460] max-w-2xl mx-auto font-light text-lg italic">Мы ценим ваше время и разработали максимально простую схему взаимодействия от звонка до результата.</p>
+            </div>
+            <div class="relative">
+                <!-- Progress Line Desktop -->
+                <div class="hidden lg:block absolute top-12 left-0 w-full h-0.5 bg-slate-200 -z-0"></div>
+                
+                <div class="relative grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-12 lg:gap-8" id="steps-grid">
+                    <!-- Steps injected by JS -->
+                </div>
+            </div>
+            
+            <div class="mt-16 p-8 bg-white rounded-3xl border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center space-x-6">
+                    <div class="p-4 bg-green-50 rounded-2xl text-green-600"><i data-lucide="truck" class="w-8 h-8"></i></div>
+                    <div>
+                        <p class="text-lg font-bold text-[#1e272e]">Заберем блок сегодня</p>
+                        <button onclick="openDeliveryModal()" class="text-xs font-bold text-[#1e272e] underline flex items-center hover:opacity-70 transition-opacity">
+                            <i data-lucide="info" class="w-3 h-3 mr-1"></i>Узнать подробнее о процессе доставки
+                        </button>
+                    </div>
+                </div>
+                <a href="#contact" class="mt-4 md:mt-0 bg-[#1e272e] text-white px-8 py-3 rounded-2xl font-bold hover:bg-[#485460] transition-all">Вызвать курьера за блоком</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews -->
+    <section id="reviews" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-sm font-bold text-[#485460] uppercase tracking-widest mb-4">Отзывы наших клиентов</h2>
+            <h3 class="text-4xl lg:text-5xl font-extrabold text-[#1e272e] mb-8 tracking-tight">Что говорят о <span class="text-[#485460]">нашей работе</span></h3>
+            <p class="text-[#485460] max-w-2xl mx-auto font-light text-lg mb-16">Профессиональное оборудование, качественная элементная база и тысячи довольных клиентов — факторы, на которых строится наша работа.</p>
+            <div class="grid md:grid-cols-2 gap-8 text-left" id="reviews-grid">
+                <!-- Reviews injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section id="contact" class="py-24 bg-slate-50 scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-[40px] shadow-2xl overflow-hidden border border-slate-100 lg:flex">
+                <!-- Contact Info Panel -->
+                <div class="p-12 lg:p-20 bg-[#1e272e] text-white lg:w-1/2">
+                    <h2 class="text-4xl font-extrabold mb-8 tracking-tight">Свяжитесь с нами</h2>
+                    <p class="text-slate-300 font-light text-lg mb-12 leading-relaxed">
+                      Специалисты компании Енот имеют глубокое понимание тонкостей работы электроники. Мы беремся за самые сложные случаи!
+                    </p>
+                    
+                    <div class="space-y-8">
+                        <div class="flex items-center space-x-6 group">
+                            <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center transition-colors group-hover:bg-white/20 shadow-inner"><i data-lucide="phone"></i></div>
+                            <div>
+                              <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Телефон для связи</p>
+                              <a href="tel:+79991234567" class="text-xl font-bold hover:text-slate-300 transition-colors">+7 (999) 123-45-67</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-6 group">
+                            <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center transition-colors group-hover:bg-white/20 shadow-inner"><i data-lucide="mail"></i></div>
+                            <div>
+                              <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Электронная почта</p>
+                              <a href="mailto:info@enot-ecu.ru" class="text-xl font-bold hover:text-slate-300 transition-colors">info@enot-ecu.ru</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-6 group">
+                            <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center transition-colors group-hover:bg-white/20 shadow-inner"><i data-lucide="map-pin"></i></div>
+                            <div>
+                              <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Адрес лаборатории</p>
+                              <p class="text-xl font-bold">г. Москва, Автозаводская ул., д. 23</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-16 pt-12 border-t border-white/10 flex space-x-6">
+                        <a href="#" class="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-colors shadow-sm"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                        <a href="#" class="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-colors shadow-sm"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                        <a href="#" class="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-colors shadow-sm"><i data-lucide="globe" class="w-5 h-5"></i></a>
+                    </div>
+                </div>
+
+                <!-- Contact Form Panel -->
+                <div class="p-12 lg:p-20 lg:w-1/2" id="form-container">
+                    <form id="contact-form" class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-[#1e272e] uppercase tracking-wider">Ваше Имя</label>
+                                <input required type="text" placeholder="Иван" class="w-full bg-slate-50 border-2 border-transparent focus:border-[#1e272e] rounded-2xl p-4 outline-none transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-[#1e272e] uppercase tracking-wider">Телефон</label>
+                                <input required type="tel" placeholder="+7 (___) ___ __ __" class="w-full bg-slate-50 border-2 border-transparent focus:border-[#1e272e] rounded-2xl p-4 outline-none transition-all">
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-[#1e272e] uppercase tracking-wider">Модель автомобиля / Блока</label>
+                            <input type="text" placeholder="Bosch EDC16 / BMW X5" class="w-full bg-slate-50 border-2 border-transparent focus:border-[#1e272e] rounded-2xl p-4 outline-none transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-[#1e272e] uppercase tracking-wider">Описание неисправности</label>
+                            <textarea rows="4" placeholder="Например: машина не заводится, ошибки по связи..." class="w-full bg-slate-50 border-2 border-transparent focus:border-[#1e272e] rounded-2xl p-4 outline-none transition-all resize-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-[#1e272e] text-white py-5 rounded-2xl font-bold text-lg hover:bg-[#485460] shadow-xl transform transition-all active:scale-95 flex items-center justify-center group">
+                          Отправить заявку <i data-lucide="send" class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                        <p class="text-center text-xs text-[#485460] font-light italic">Нажимая кнопку, вы соглашаетесь с <button type="button" onclick="openPrivacyModal()" class="font-bold underline decoration-[#1e272e]/20 hover:decoration-[#1e272e]">политикой конфиденциальности</button></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white py-12 border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-[#485460]">
+            <div class="flex items-center space-x-2 text-[#1e272e] font-extrabold text-xl mb-4 md:mb-0">
+                <div class="bg-[#1e272e] p-1.5 rounded-md"><i data-lucide="cpu" class="w-5 h-5 text-white"></i></div><span>ЕНОТ</span>
+            </div>
+            <div class="flex space-x-8 mb-4 md:mb-0">
+                <a href="#services" class="hover:text-[#1e272e] transition-colors">Услуги</a>
+                <button onclick="openPrivacyModal()" class="hover:text-[#1e272e] transition-colors">Политика</button>
+                <button onclick="openDeliveryModal()" class="hover:text-[#1e272e] transition-colors">Курьерская доставка</button>
+            </div>
+            <p class="text-slate-400 font-light italic">© 2024 Лаборатория «Енот». Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="modal-privacy" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
+        <div class="absolute inset-0 bg-[#1e272e]/40 backdrop-blur-md" onclick="closeModals()"></div>
+        <div class="relative bg-white w-full max-w-2xl max-h-[80vh] overflow-hidden rounded-[40px] shadow-2xl flex flex-col modal-enter">
+            <div class="p-8 border-b border-slate-100 flex justify-between items-center">
+              <h3 class="text-2xl font-extrabold text-[#1e272e]">Политика конфиденциальности</h3>
+              <button onclick="closeModals()" class="p-2 hover:bg-slate-100 rounded-full transition-colors text-[#485460]"><i data-lucide="x"></i></button>
+            </div>
+            <div class="p-8 overflow-y-auto text-[#485460] font-light leading-relaxed space-y-6">
+                <section>
+                    <h4 class="font-bold text-[#1e272e] mb-2 text-lg">1. Общие положения</h4>
+                    <p>Настоящая политика обработки персональных данных составлена в соответствии с требованиями Федерального закона от 27.07.2006. №152-ФЗ «О персональных данных» и определяет порядок обработки персональных данных и меры по обеспечению безопасности персональных данных компании «Енот».</p>
+                </section>
+                <section>
+                    <h4 class="font-bold text-[#1e272e] mb-2 text-lg">2. Какие данные мы собираем</h4>
+                    <p>Мы собираем только те данные, которые необходимы для связи с вами и оказания услуг по диагностике и ремонту ЭБУ:</p>
+                    <ul class="list-disc ml-6 mt-2 space-y-1">
+                        <li>Имя (для идентификации клиента);</li>
+                        <li>Номер телефона (для консультации и уточнения деталей заказа);</li>
+                        <li>Информация об автомобиле (марка, модель, симптомы неисправности).</li>
+                    </ul>
+                </section>
+                <section>
+                    <h4 class="font-bold text-[#1e272e] mb-2 text-lg">3. Цели сбора данных</h4>
+                    <p>Персональные данные Пользователя могут использоваться в целях:</p>
+                    <ul class="list-disc ml-6 mt-2 space-y-1">
+                        <li>Идентификации клиента для оформления заказа;</li>
+                        <li>Предоставления эффективной технической поддержки;</li>
+                        <li>Уведомления о ходе работ и готовности блока;</li>
+                        <li>Согласования времени приезда курьера.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h4 class="font-bold text-[#1e272e] mb-2 text-lg">4. Срок хранения и защита</h4>
+                    <p>Мы храним ваши данные ровно столько, сколько требуется для завершения работ по вашему заказу и выполнения гарантийных обязательств (обычно до 12 месяцев). Мы принимаем все необходимые меры для защиты персональной информации от неправомерного доступа.</p>
+                </section>
+            </div>
+            <div class="p-8 border-t border-slate-100 bg-slate-50">
+              <button onclick="closeModals()" class="w-full bg-[#1e272e] text-white py-4 rounded-2xl font-bold hover:bg-[#485460] transition-all">Понятно</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delivery" class="fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
+        <div class="absolute inset-0 bg-[#1e272e]/40 backdrop-blur-md" onclick="closeModals()"></div>
+        <div class="relative bg-white w-full max-w-2xl max-h-[80vh] overflow-hidden rounded-[40px] shadow-2xl flex flex-col modal-enter">
+            <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div class="flex items-center space-x-3">
+                <div class="p-2 bg-[#1e272e] rounded-xl"><i data-lucide="truck" class="w-6 h-6 text-white"></i></div>
+                <h3 class="text-2xl font-extrabold text-[#1e272e]">Курьерская доставка</h3>
+              </div>
+              <button onclick="closeModals()" class="p-2 hover:bg-slate-200 rounded-full transition-colors text-[#485460]"><i data-lucide="x"></i></button>
+            </div>
+            <div class="p-8 overflow-y-auto text-[#485460] font-light leading-relaxed space-y-8">
+                <p class="text-lg">Мы понимаем, что время — самый ценный ресурс. Поэтому в компании «Енот» работает собственная служба доставки электронных блоков для вашего удобства.</p>
+                <div class="grid gap-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="mt-1 p-2 bg-blue-50 rounded-lg text-blue-600 flex-shrink-0"><i data-lucide="map-pin" class="w-5 h-5"></i></div>
+                        <div>
+                            <h4 class="font-bold text-[#1e272e] mb-1">География</h4>
+                            <p class="text-sm">По Москве и МО курьер приезжает в день обращения. Для других регионов России мы работаем через надежные службы СДЭК и ПЭК.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="mt-1 p-2 bg-indigo-50 rounded-lg text-indigo-600 flex-shrink-0"><i data-lucide="package" class="w-5 h-5"></i></div>
+                        <div>
+                            <h4 class="font-bold text-[#1e272e] mb-1">Упаковка</h4>
+                            <p class="text-sm">Курьер привезет с собой антистатический пакет и защитный бокс. Это критически важно для сохранности микросхем при транспортировке.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="mt-1 p-2 bg-emerald-50 rounded-lg text-emerald-600 flex-shrink-0"><i data-lucide="clock" class="w-5 h-5"></i></div>
+                        <div>
+                            <h4 class="font-bold text-[#1e272e] mb-1">Сроки</h4>
+                            <p class="text-sm">Забор блока занимает не более 15 минут. Обратная доставка осуществляется сразу после завершения ремонта и финальных тестов.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-4">
+                        <div class="mt-1 p-2 bg-rose-50 rounded-lg text-rose-600 flex-shrink-0"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+                        <div>
+                            <h4 class="font-bold text-[#1e272e] mb-1">Безопасность</h4>
+                            <p class="text-sm">Оформляется официальный акт приема-передачи с фиксацией серийного номера и внешнего состояния вашего электронного блока.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                    <p class="text-sm font-medium text-[#1e272e] mb-2 uppercase tracking-wider">Стоимость сервиса:</p>
+                    <p class="text-sm">При заказе последующего ремонта — <strong>забор блока курьером БЕСПЛАТНО</strong>. В случае только диагностики — 500 руб. (в пределах МКАД).</p>
+                </div>
+            </div>
+            <div class="p-8 border-t border-slate-100">
+              <button onclick="closeModals()" class="w-full bg-[#1e272e] text-white py-4 rounded-2xl font-bold hover:bg-[#485460] transition-all shadow-md">Всё понятно</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Data
+        const services = [
+            { title: 'Легковые авто', desc: 'Диагностика и ремонт ЭБУ всех мировых марок, включая сложные программные ошибки и адаптацию.', icon: 'car', color: 'bg-blue-50 text-blue-600' },
+            { title: 'Грузовой транспорт', desc: 'Работаем с блоками управления тяжелой техники, тягачей (Scania, Volvo, MAN) и автобусов.', icon: 'truck', color: 'bg-indigo-50 text-indigo-600' },
+            { title: 'Спецтехника', desc: 'Ремонт контроллеров экскаваторов, погрузчиков, генераторов и сельскохозяйственной техники.', icon: 'tractor', color: 'bg-slate-50 text-slate-600' },
+            { title: 'Прошивка и ПО', desc: 'Исправление заводских ошибок в ПО, клонирование блоков, чип-тюнинг и удаление иммобилайзеров.', icon: 'binary', color: 'bg-purple-50 text-purple-600' },
+            { title: 'Диагностика', desc: 'Глубокий анализ аппаратной части блока на профессиональном стенде с имитацией нагрузок.', icon: 'settings', color: 'bg-emerald-50 text-emerald-600' },
+            { title: 'Сложные случаи', desc: 'Восстановление после попадания влаги (залитые блоки), короткого замыкания или неквалифицированного вмешательства.', icon: 'wrench', color: 'bg-rose-50 text-rose-600' }
+        ];
+
+        const steps = [
+            { title: 'Звонок в "Енот"', desc: 'Вы связываетесь с нами и описываете суть проблемы.', icon: 'phone-call' },
+            { title: 'Консультация', desc: 'Специалист анализирует симптомы и дает предварительную оценку.', icon: 'message-square' },
+            { title: 'Доставка блока', desc: 'Привозите сами или наш курьер заберет блок у вас.', icon: 'truck' },
+            { title: 'Диагностика', desc: 'На стенде выявляем поломку, согласовываем сроки и цену.', icon: 'clipboard-check' },
+            { title: 'Результат', desc: 'Забираете готовый блок или мы отправляем его курьером.', icon: 'check-circle-2' }
+        ];
+
+        const reviewsData = [
+            { name: 'Игорь Денисов', car: 'BMW X5 (E70)', text: 'Залил ЭБУ после мойки двигателя, машина превратилась в «кирпич». В официальном сервисе приговорили к замене за 120к. Ребята из «Енота» восстановили мой родной блок за 3 дня и в 5 раз дешевле. Всё работает идеально.', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200' },
+            { name: 'Алексей Воронцов', car: 'СТО «АвтоТех»', text: 'Сотрудничаем с компанией «Енот» уже больше года по ремонту блоков управления грузовой техники. Всегда четкая диагностика. Если блок исправен — так и говорят. Очень ценный партнер для бизнеса.', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200' },
+            { name: 'Марина Кузнецова', car: 'Ford Focus 3', text: 'Машина глохла на светофорах, никто не мог понять причину. Здесь за полчаса нашли проблему. Микротрещина в пайке. Сделали всё очень аккуратно. Большое спасибо за человеческое отношение!', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200' }
+        ];
+
+        // Render Grids
+        const renderGrids = () => {
+            // Render Services
+            document.getElementById('services-grid').innerHTML = services.map(s => `
+                <div class="group p-8 rounded-3xl border border-slate-100 hover:shadow-2xl transition-all bg-white relative overflow-hidden">
+                    <div class="mb-6 p-4 rounded-2xl inline-block ${s.color} transition-transform group-hover:scale-110 duration-500">
+                        <i data-lucide="${s.icon}" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-3 text-[#1e272e]">${s.title}</h4>
+                    <p class="text-[#485460] font-light leading-relaxed">${s.desc}</p>
+                </div>
+            `).join('');
+
+            // Render Steps with numbering and connecting line
+            document.getElementById('steps-grid').innerHTML = steps.map((s, i) => `
+                <div class="relative group text-center flex flex-col items-center">
+                    <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-slate-50 group-hover:border-[#1e272e] group-hover:shadow-2xl transition-all duration-500 z-10 mb-6">
+                        <div class="text-[#1e272e] transition-transform group-hover:scale-110 duration-500">
+                          <i data-lucide="${s.icon}" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <!-- Step Number Badge -->
+                    <div class="absolute top-0 right-0 lg:-right-4 bg-[#1e272e] text-white w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 border-slate-50 shadow-md z-20">
+                      0${i + 1}
+                    </div>
+                    <h4 class="text-lg font-bold text-[#1e272e] mb-2">${s.title}</h4>
+                    <p class="text-sm text-[#485460] font-light leading-relaxed">${s.desc}</p>
+                </div>
+            `).join('');
+
+            // Render Reviews
+            document.getElementById('reviews-grid').innerHTML = reviewsData.map(r => `
+                <div class="bg-slate-50 p-8 rounded-[32px] border border-slate-100 relative group hover:shadow-xl transition-all duration-300">
+                    <i data-lucide="quote" class="absolute top-8 right-8 w-12 h-12 text-[#1e272e]/5"></i>
+                    <p class="text-[#485460] text-lg italic mb-8 font-light leading-relaxed">«${r.text}»</p>
+                    <div class="flex items-center space-x-4">
+                        <img src="${r.img}" class="w-14 h-14 rounded-2xl object-cover shadow-md">
+                        <div>
+                          <h4 class="font-bold text-[#1e272e]">${r.name}</h4>
+                          <p class="text-sm text-[#485460] font-medium">${r.car}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-initialize icons for new content
+            lucide.createIcons();
+        };
+
+        // Scroll Logic for Navbar
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('glass-nav', 'py-3', 'shadow-sm');
+                nav.classList.remove('py-5');
+            } else {
+                nav.classList.remove('glass-nav', 'py-3', 'shadow-sm');
+                nav.classList.add('py-5');
+            }
+        });
+
+        // Modals Toggle Logic
+        const openPrivacyModal = () => {
+          document.getElementById('modal-privacy').classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        };
+        const openDeliveryModal = () => {
+          document.getElementById('modal-delivery').classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        };
+        const closeModals = () => {
+            document.getElementById('modal-privacy').classList.add('hidden');
+            document.getElementById('modal-delivery').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
+
+        // Mobile Menu Logic
+        const mobileMenu = document.getElementById('mobile-menu');
+        document.getElementById('mobile-menu-btn').onclick = () => mobileMenu.classList.remove('hidden');
+        document.getElementById('close-menu-btn').onclick = () => mobileMenu.classList.add('hidden');
+        const toggleMenu = () => mobileMenu.classList.add('hidden');
+
+        // Form Submission Logic
+        document.getElementById('contact-form').onsubmit = (e) => {
+            e.preventDefault();
+            const container = document.getElementById('form-container');
+            container.innerHTML = `
+                <div class="h-full flex flex-col items-center justify-center text-center space-y-4 animate-in fade-in zoom-in duration-500">
+                    <div class="bg-green-100 p-6 rounded-full text-green-600 shadow-lg">
+                      <i data-lucide="check-circle" class="w-16 h-16"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-[#1e272e]">Заявка принята!</h3>
+                    <p class="text-[#485460] max-w-xs">Спасибо за доверие. Наш мастер перезвонит вам в течение 15 минут для уточнения деталей.</p>
+                </div>
+            `;
+            lucide.createIcons();
+        };
+
+        // Initial Grid Render
+        renderGrids();
+    </script>
+</body>
+</html>
